@@ -1,0 +1,145 @@
+
+#include<iostream>
+#include<fstream>
+#include<sstream>
+#include<iomanip>
+using namespace std;
+bool doesUsernameExist(const string&username) 
+{
+    ifstream file("user_data.txt");
+    string line;
+    while(getline(file,line))
+    {
+        istringstream iss(line);
+        string storedUsername;
+        iss>>storedUsername;
+        if(storedUsername==username)
+        {
+            return true; // Username exists
+        }
+    }
+    return false; // Username does not exist
+}
+// Function to sign up a new user
+void signUp() 
+{
+    ofstream file("user_data.txt",ios::app);
+    string username,password;
+    cout<<"Enter a username: ";
+    cin>>username;
+    // Checking if the username already exists
+    if (doesUsernameExist(username))
+    {
+        cout<<"Username already exists. Please choose another username.\n";
+        return;
+    }
+    cout<<"Enter a password: ";
+    cin>>password;
+    // Save the new user information to the file
+    file<<username<<" "<<password<<endl;
+    cout<<"You have successfully signed up!\n";
+}
+// Function to log in a user
+bool logIn() 
+{
+    ifstream file("user_data.txt");
+    string enteredUsername,enteredPassword;
+    cout<<"Enter your username: ";
+    cin>>enteredUsername;
+    cout<<"Enter your password: ";
+    cin>>enteredPassword;
+    string storedUsername,storedPassword;
+    while(file>>storedUsername>>storedPassword)
+    {
+        if(storedUsername==enteredUsername&&storedPassword==enteredPassword) 
+        {
+            cout<<"Login successful!\n";
+            return true;
+        }
+    }
+    cout<<"Incorrect username or password. Please try again.\n";
+    return false;
+}
+// Home planner function
+void homePlanner()
+{
+    // Input: Length and breadth of the house
+    double houseLength,houseBreadth;
+    cout<<"Enter the length of the house: ";
+    cin>>houseLength;
+    cout<<"Enter the breadth of the house: ";
+    cin>>houseBreadth;
+    // Calculate area of the house
+    double houseArea=houseLength*houseBreadth;
+    // Allocate space for bedroom, kitchen, hall, and bathroom
+    double bedroomLength,bedroomBreadth;
+    double kitchenLength,kitchenBreadth;
+    double hallLength,hallBreadth;
+    double bathroomLength,bathroomBreadth;
+    // Assume standard dimensions for each room
+    bedroomLength=bedroomBreadth=10.0;
+    kitchenLength=kitchenBreadth=8.0;
+    hallLength=hallBreadth=15.0;
+    bathroomLength=bathroomBreadth=6.0;
+    // Calculate total area allocated for rooms
+    double totalRoomArea=bedroomLength*bedroomBreadth+
+                           kitchenLength*kitchenBreadth+
+                           hallLength*hallBreadth+
+                           bathroomLength*bathroomBreadth;
+    // Calculate remaining space
+    double remainingSpace=houseArea-totalRoomArea;
+    // Display the allocated space and remaining space
+    cout<<"\nSpace allocated for rooms:\n"
+         << "Bedroom: "<<bedroomLength*bedroomBreadth<<" square units\n"
+         << "Kitchen: "<<kitchenLength*kitchenBreadth<<" square units\n"
+         << "Hall: "<<hallLength*hallBreadth<<" square units\n"
+         << "Bathroom: "<<bathroomLength*bathroomBreadth<<" square units\n"
+         << "Total Allocated Space: "<<totalRoomArea<<" square units\n"
+         << "Remaining Space: "<<remainingSpace<<" square units\n\n";
+    // Suggest to build an extra bedroom or space for a balcony
+    if(remainingSpace>=100.0) 
+    {
+        cout<<"You have enough space to build an extra bedroom. Consider expanding!\n";
+    } 
+    else if(remainingSpace>=50.0)
+    {
+        cout<<"You have some space left. You may consider allocating space for a balcony.\n";
+    }
+    else 
+    {
+        cout<<"The available space is limited. Optimize the existing layout.\n";
+    }
+}
+int main()
+{
+    // Main menu
+    while(true)
+    {
+        cout<<"\nMain Menu:\n";
+        cout<<"1. Sign Up\n";
+        cout<<"2. Log In\n";
+        cout<<"3. Exit\n";
+        int mainMenuChoice;
+        cout<<"Enter your choice (1-3): ";
+        cin>>mainMenuChoice;
+        switch(mainMenuChoice) 
+        {
+            case 1:
+                signUp();
+                break;
+            case 2:
+                if(logIn())
+                {
+                    // If login is successful, proceed with the home planner
+                    homePlanner();
+                }
+                break;
+            case 3:
+                cout << "Exiting the program. Goodbye!\n";
+                return 0;
+            default:
+                cout << "Invalid choice. Please enter a valid option.\n";
+        }
+    }
+    return 0;
+}
